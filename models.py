@@ -10,7 +10,7 @@ class Perfil(Base):
     __tablename__ = 'perfil'
     __table_args__ = {'schema': 'api_steam'}
 
-    steamID = Column(BigInteger, primary_key=True)
+    steamid = Column(BigInteger, primary_key=True)
     personaname = Column(String(255))
     profileurl = Column(Text)
     avatar = Column(Text)
@@ -27,11 +27,11 @@ class JogoDoJogador(Base):
     __tablename__ = 'jogodojogador'
     __table_args__ = {'schema': 'api_steam'}
 
-    steamID = Column(BigInteger, ForeignKey('api_steam.perfil.steamID'), primary_key=True)
+    steamid = Column(BigInteger, ForeignKey('api_steam.perfil.steamid'), primary_key=True)
     appid = Column(Integer, primary_key=True)
     playtime_2weeks = Column(Integer)
     playtime_forever = Column(Integer)
-    perfil_jogador = relationship('Perfil')
+    perfil_jogador = relationship('Perfil',foreign_keys=[steamid])
 
 
 class Jogos(Base):
@@ -41,19 +41,7 @@ class Jogos(Base):
     appid = Column(Integer, primary_key=True)
     name = Column(String(200))
 
-
-class Conquista_por_player(Base):
-    __tablename__ = 'conquista_por_player'
-    __table_args__ = {'schema': 'api_steam'}
-
-    steamID = Column(BigInteger, ForeignKey('api_steam.perfil.steamID'), primary_key=True)
-    appid = Column(Integer, primary_key=True)
-    apiname = Column(String(100), primary_key=True)
-    achieved = Column(Integer)
-    unlocktime = Column(BigInteger)
-    perfil_jogador = relationship('Perfil')
-    jogo_jogador = relationship('Jogos')
-
+    
 
 class Conquista(Base):
     __tablename__ = 'conquista'
@@ -63,17 +51,31 @@ class Conquista(Base):
     appid = Column(Integer, ForeignKey('api_steam.jogos.appid'))
     name = Column(String(255))
     descricao = Column(String(255))
-    conquista_jogo = relationship('Jogos')
+    jogo_conquista = relationship('Jogos',foreign_keys=[appid])
 
+
+class Conquista_por_player(Base):
+    __tablename__ = 'conquista_por_player'
+    __table_args__ = {'schema': 'api_steam'}
+
+    steamid = Column(BigInteger,ForeignKey('api_steam.perfil.steamid'), primary_key=True)
+    appid = Column(Integer,ForeignKey('api_steam.jogos.appid'), primary_key=True)
+    apiname = Column(String(100),ForeignKey('api_steam.conquista.apiname'), primary_key=True)
+    achieved = Column(Integer)
+    unlocktime = Column(BigInteger)
+    perfil_jogador = relationship('Perfil',foreign_keys=[steamid])
+    jogo_jogador = relationship('Jogos',foreign_keys=[appid])
+    conquista_jogo = relationship('Conquista',foreign_keys=[apiname])
+    
 
 class ListaDeAmigos(Base):
     __tablename__ = 'lista_de_amigos'
     __table_args__ = {'schema':'api_steam'}
 
-    steamID = Column(BigInteger, ForeignKey('api_steam.perfil.steamID'), primary_key=True)
-    friend_steamID = Column(BigInteger, ForeignKey('api_steam.perfil.steamID'), primary_key=True)
-    relationship = Column(Enum('all', 'friend', name='relationship'), nullable=False)
+    steamid = Column(BigInteger, ForeignKey('api_steam.perfil.steamid'), primary_key=True)
+    friend_steamid = Column(BigInteger, ForeignKey('api_steam.perfil.steamid'), primary_key=True)
+    relacao = Column(Enum('all', 'friend', name='relationship'), nullable=False)
     friend_since = Column(DateTime)
 
-    perfil = relationship('Perfil', foreign_keys=[steamID])
-    amigo = relationship('Perfil', foreign_keys=[friend_steamID])
+    perfil = relationship('Perfil', foreign_keys=[steamid])
+    amigo = relationship('Perfil', foreign_keys=[friend_steamid])
