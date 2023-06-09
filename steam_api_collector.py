@@ -1,16 +1,16 @@
 import requests
-from config import STEAM_API_KEY
+from config import STEAM_API_KEY, Session
 from steam_api_converter import converter_json_para_conquista, converter_json_para_conquista_por_player, converter_json_para_jogo_do_jogador, converter_json_para_jogos, converter_json_para_lista_de_amigos, converter_json_para_perfil, inserir_dados_na_tabela
 import tkinter as tk
 from config import engine
 from sqlalchemy.orm import sessionmaker
-from steam_api_collector import coletar_dados_api_steam
+
 
 def coletar_dados_e_inserir():
     # Implemente aqui a lógica para coletar os dados via APIs e inserir no banco de dados
     print("Coletando dados via APIs e inserindo no banco de dados...")
 
-    steamID = '123456789'  # Insira o SteamID desejado
+    steamID = '76561198006911994'  # Insira o SteamID desejado
 
     # Coleta dados via API para a tabela Perfil
     url_player_summaries = f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={STEAM_API_KEY}&steamids={steamID}'
@@ -27,14 +27,14 @@ def coletar_dados_e_inserir():
     # Coleta dados via API para a tabela JogoDoJogador
     url_owned_games = f'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={STEAM_API_KEY}&steamid={steamID}'
     response_owned_games = requests.get(url_owned_games)
-    data_owned_games = response_owned_games.json()['response']
-    jogos_do_jogador = [converter_json_para_jogo_do_jogador(jogo) for jogo in data_owned_games['games']]
+    data_owned_games = response_owned_games.json()['response']['games']
+    jogos_do_jogador = [converter_json_para_jogo_do_jogador(jogo, steamID) for jogo in data_owned_games]
 
     # Coleta dados via API para a tabela Conquista_por_player
-    url_player_achievements = f'http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?key={STEAM_API_KEY}&steamid={steamID}'
+    url_player_achievements = f'http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?key={STEAM_API_KEY}&steamid={steamID}&appid=200210'
     response_player_achievements = requests.get(url_player_achievements)
     data_player_achievements = response_player_achievements.json()['playerstats']['achievements']
-    conquistas_do_jogador = [converter_json_para_conquista_por_player(conquista) for conquista in data_player_achievements]
+    conquistas_do_jogador = [converter_json_para_conquista_por_player(conquista,steamID,200210) for conquista in data_player_achievements]
 
     # Insere os dados no banco de dados
     Session = sessionmaker(bind=engine)
