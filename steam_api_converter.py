@@ -1,21 +1,21 @@
 from sqlalchemy.orm import sessionmaker
 from models import Perfil, JogoDoJogador, Jogos, Conquista_por_player, Conquista, ListaDeAmigos
+from datetime import datetime
 
 def converter_json_para_perfil(json_data):
-    steamID = json_data['steamID']
+    steamID = json_data['steamid']
     personaname = json_data['personaname']
     profileurl = json_data['profileurl']
     avatar = json_data['avatar']
     personastate = json_data['personastate']
     communityvisibilitystate = json_data['communityvisibilitystate']
     profilestate = json_data['profilestate']
-    lastlogoff = json_data['lastlogoff']
-    realname = json_data.get('realname', '')
+    lastlogoff = datetime.fromtimestamp(json_data['lastlogoff'])
+    realname = json_data['realname']
     primaryclanid = json_data['primaryclanid']
-    game_count = json_data.get('game_count', 0)
 
     return Perfil(
-        steamID=steamID,
+        steamid =steamID,
         personaname=personaname,
         profileurl=profileurl,
         avatar=avatar,
@@ -24,18 +24,19 @@ def converter_json_para_perfil(json_data):
         profilestate=profilestate,
         lastlogoff=lastlogoff,
         realname=realname,
-        primaryclanid=primaryclanid,
-        game_count=game_count
+        primaryclanid=primaryclanid
     )
 
-def converter_json_para_jogo_do_jogador(json_data):
-    steamID = json_data['steamID']
+def converter_json_para_jogo_do_jogador(json_data,steamid):
+    print(json_data)
+    steamID = steamid
     appid = json_data['appid']
-    playtime_2weeks = json_data['playtime_2weeks']
+    playtime_2weeks = 0
+    #playtime_2weeks = json_data['playtime_2weeks']
     playtime_forever = json_data['playtime_forever']
 
     return JogoDoJogador(
-        steamID=steamID,
+        steamid=steamID,
         appid=appid,
         playtime_2weeks=playtime_2weeks,
         playtime_forever=playtime_forever
@@ -50,15 +51,15 @@ def converter_json_para_jogos(json_data):
         name=name
     )
 
-def converter_json_para_conquista_por_player(json_data):
-    steamID = json_data['steamID']
-    appid = json_data['appid']
+def converter_json_para_conquista_por_player(json_data,steamid,app):
+    steamID = steamid
+    appid = app
     apiname = json_data['apiname']
     achieved = json_data['achieved']
     unlocktime = json_data['unlocktime']
 
     return Conquista_por_player(
-        steamID=steamID,
+        steamid=steamID,
         appid=appid,
         apiname=apiname,
         achieved=achieved,
@@ -79,14 +80,14 @@ def converter_json_para_conquista(json_data):
     )
 
 def converter_json_para_lista_de_amigos(json_data):
-    steamID = json_data['steamID']
+    steamID = json_data['steamid']
     friend_steamID = json_data['friend_steamID']
     relationship = json_data['relationship']
     friend_since = json_data['friend_since']
 
     return ListaDeAmigos(
-        steamID=steamID,
-        friend_steamID=friend_steamID,
+        steamid=steamID,
+        friend_steamid=friend_steamID,
         relationship=relationship,
         friend_since=friend_since
     )
