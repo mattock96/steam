@@ -11,14 +11,14 @@ class Perfil(Base):
     __table_args__ = {'schema': 'api_steam'}
 
     steamid = Column(BigInteger, primary_key=True)
-    personaname = Column(String(255))
+    personaname = Column(String(500))
     profileurl = Column(Text)
     avatar = Column(Text)
     personastate = Column(Integer)
     communityvisibilitystate = Column(Integer)
     profilestate = Column(Integer)
     lastlogoff = Column(TIMESTAMP)
-    realname = Column(String(255))
+    realname = Column(String(500))
     primaryclanid = Column(BigInteger)
     game_count = Column(Integer)
 
@@ -47,10 +47,10 @@ class Conquista(Base):
     __tablename__ = 'conquista'
     __table_args__ = {'schema': 'api_steam'}
 
-    apiname = Column(String(100), primary_key=True)
+    apiname = Column(String(500), primary_key=True)
     appid = Column(Integer, ForeignKey('api_steam.jogos.appid'))
-    name = Column(String(255))
-    descricao = Column(String(255))
+    name = Column(String(500))
+    descricao = Column(String(500))
     jogo_conquista = relationship('Jogos',foreign_keys=[appid])
 
 
@@ -60,7 +60,7 @@ class Conquista_por_player(Base):
 
     steamid = Column(BigInteger,ForeignKey('api_steam.perfil.steamid'), primary_key=True)
     appid = Column(Integer,ForeignKey('api_steam.jogos.appid'), primary_key=True)
-    apiname = Column(String(100),ForeignKey('api_steam.conquista.apiname'), primary_key=True)
+    apiname = Column(String(500),ForeignKey('api_steam.conquista.apiname'), primary_key=True)
     achieved = Column(Integer)
     unlocktime = Column(BigInteger)
     perfil_jogador = relationship('Perfil',foreign_keys=[steamid])
@@ -68,14 +68,5 @@ class Conquista_por_player(Base):
     conquista_jogo = relationship('Conquista',foreign_keys=[apiname])
     
 
-class ListaDeAmigos(Base):
-    __tablename__ = 'lista_de_amigos'
-    __table_args__ = {'schema':'api_steam'}
 
-    steamid = Column(BigInteger, ForeignKey('api_steam.perfil.steamid'), primary_key=True)
-    friend_steamid = Column(BigInteger, ForeignKey('api_steam.perfil.steamid'), primary_key=True)
-    relacao = Column(Enum('all', 'friend', name='relationship'), nullable=False)
-    friend_since = Column(DateTime)
 
-    perfil = relationship('Perfil', foreign_keys=[steamid])
-    amigo = relationship('Perfil', foreign_keys=[friend_steamid])
