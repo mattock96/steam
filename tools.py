@@ -2,7 +2,7 @@ import asyncio
 import random
 import aiohttp
 
-IdsRequeridos=10
+IdsRequeridos=1
 
 LANGUAGES = {
     'en': ['level'],
@@ -36,7 +36,7 @@ async def check_steam_profiles():
 
     return found_profiles
 
-
+# Run the coroutine
 def run_check_steam_profiles():
     loop = asyncio.get_event_loop()
     public_profiles = loop.run_until_complete(check_steam_profiles())
