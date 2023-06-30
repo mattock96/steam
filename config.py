@@ -5,13 +5,13 @@ STEAM_API_KEY = '8AB7ABCBD0C22607085362EF8F758022'
 DB_HOST = 'localhost'
 DB_PORT = '5432'
 DB_NAME = 'steam'
-DB_USER = 'db_manager'
-DB_PASSWORD = 'Dbmanagerste@m2023'
+DB_USER = 'postgres'
+DB_PASSWORD = 'postgres'
 
 url_object = URL.create(
     "postgresql+psycopg2",
-    username="db_manager",
-    password="Dbmanagerste@m2023",  # plain (unescaped) text
+    username="postgres",
+    password="postgres",  # plain (unescaped) text
     host="localhost",
     database="steam",
 )
