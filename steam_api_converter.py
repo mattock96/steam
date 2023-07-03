@@ -31,7 +31,7 @@ def converter_json_para_perfil(json_data, session):
         primaryclanid = 0
     
     if json_data.get('locstatecode') is not None:
-        locstatecodeA = json_data['locstatecode']
+        locstatecodeA = json_data['locstatecode'][:2]  # Truncate to 2 characters
     else:
         locstatecodeA = None
     
