@@ -1,5 +1,5 @@
 from sqlalchemy import Column, DateTime, Integer, BigInteger, String, Text, TIMESTAMP, ForeignKey, Enum
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -52,7 +52,7 @@ class Conquista(Base):
     __tablename__ = 'conquista'
     __table_args__ = {'schema': 'api_steam'}
 
-    apiname = Column(String(500), primary_key=True)
+    apiname = Column(String(100), primary_key=True)
     appid = Column(Integer, ForeignKey('api_steam.jogos.appid'))
     jogo_conquista = relationship('Jogos',foreign_keys=[appid])
 
